@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  refreshTokens RefreshToken[]  // Relation to refresh tokens
+  songs         Song[] // ✅ 1:N relation (one user → many songs)
+  favorites     Favorite[]
+  createdAt DateTime @default(now())
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  token      String               // hashed-refresh-token
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
+
+  deviceId   String               // e.g. “c7c1d1b2-73b9-4a12…”
+  deviceInfo String?              // e.g. “Chrome 120 on Windows 11”
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+
+  @@unique([userId, deviceId], name: "user_device_unique") // 🗝 one row per device
+}
+
+model Song {
+  id           Int      @id @default(autoincrement())
+  name         String
+  artist       String
+  color        String    // hex color string, e.g. #ff8800
+  audioPath    String    // e.g. /uploads/audio/audio-xxxx.mp3
+  thumbnailPath String   // e.g. /uploads/thumbnails/thumb-xxxx.jpg
+  createdAt    DateTime  @default(now())
+
+  // ✅ Relation to User
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
+  favorites     Favorite[]
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  songId    Int
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  song      Song     @relation(fields: [songId], references: [id])
+
+  @@unique([userId, songId]) // ✅ Prevent duplicates (one favorite per user-song)
+  @@index([userId])          // ✅ Optimize fetching favorites by user
+  @@index([songId])          // ✅ Optimize counting favorites by song
+}

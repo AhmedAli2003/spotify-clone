@@ -1,0 +1,4 @@
+### Get all songs
+GET http://localhost:3000/songs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiYTdtZWRAZ21haWwuY29tIiwiaWF0IjoxNzQ3NzE3ODAzLCJleHAiOjE3NDc4MDQyMDN9.CteKokj4-izxlrVVN3cI53HRGEyiwyX0i0lMCxbgYeQ
