@@ -8,7 +8,6 @@ import 'package:spotify_clone_app/core/utils/ui_utils.dart';
 import 'package:spotify_clone_app/core/widgets/custom_field.dart';
 import 'package:spotify_clone_app/core/widgets/loader.dart';
 import 'package:spotify_clone_app/features/auth/controllers/auth_controller.dart';
-import 'package:spotify_clone_app/features/auth/dtos/register_dto.dart';
 import 'package:spotify_clone_app/features/auth/views/widgets/auth_gradient_button.dart';
 
 class SignUpPage extends HookConsumerWidget {
@@ -21,18 +20,20 @@ class SignUpPage extends HookConsumerWidget {
     final passwordController = useTextEditingController();
     final formKey = useMemoized(() => GlobalKey<FormState>());
 
-    final isLoading = ref.watch(authControllerProvider.select((val) => val.isLoading == true));
+    final isLoading = ref.watch(authControllerProvider.select((val) => val.isLoading));
 
     ref.listen(
       authControllerProvider,
       (_, next) {
         next.when(
           data: (data) {
-            showSnackBar(
-              context,
-              'Account created successfully! Please login.',
-            );
-            navigateToHome(context);
+            if (data != null) {
+              showSnackBar(
+                context,
+                'Account created successfully! Please login.',
+              );
+              navigateToHome(context);
+            }
           },
           error: (error, st) => handleError(context, error, st: st),
           loading: () {},
@@ -122,11 +123,9 @@ class SignUpPage extends HookConsumerWidget {
   }) async {
     if (formKey.currentState!.validate()) {
       await ref.read(authControllerProvider.notifier).signup(
-            RegisterDto(
-              name: nameController.text,
-              email: emailController.text,
-              password: passwordController.text,
-            ),
+            name: nameController.text,
+            email: emailController.text,
+            password: passwordController.text,
           );
     } else {
       showSnackBar(context, 'Missing fields!');

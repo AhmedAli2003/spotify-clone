@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:spotify_clone_app/core/errors/api_exception.dart';
 import 'package:spotify_clone_app/core/errors/app_exception.dart';
 import 'package:spotify_clone_app/core/errors/failure.dart';
@@ -7,7 +9,78 @@ import 'package:dio/dio.dart';
 class ErrorHandler {
   const ErrorHandler._();
 
+  static Future<T> asyncWrapper<T>(Future<T> Function() asyncFunc) async {
+    try {
+      return await asyncFunc();
+    } catch (error, st) {
+      if (error is! Failure) {
+        debugPrint(error.toString());
+        debugPrint(st.toString());
+      }
+      throw handleError(error);
+    }
+  }
+
+  static Future<T?> nullableAsyncWrapper<T>(Future<T?> Function() asyncFunc) async {
+    try {
+      return await asyncFunc();
+    } catch (error, st) {
+      if (error is! Failure) {
+        debugPrint(error.toString());
+        debugPrint(st.toString());
+      }
+      throw handleError(error);
+    }
+  }
+
+  static T syncWrapper<T>(T Function() syncFunc) {
+    try {
+      return syncFunc();
+    } catch (error, st) {
+      if (error is! Failure) {
+        debugPrint(error.toString());
+        debugPrint(st.toString());
+      }
+      throw handleError(error);
+    }
+  }
+
+  static T? nullableSyncWrapper<T>(T? Function() syncFunc) {
+    try {
+      return syncFunc();
+    } catch (error, st) {
+      if (error is! Failure) {
+        debugPrint(error.toString());
+        debugPrint(st.toString());
+      }
+      throw handleError(error);
+    }
+  }
+
+  static Future<bool> booleanWrapper(FutureOr<void> Function() fun) async {
+    try {
+      await fun();
+      return true;
+    } catch (error, st) {
+      debugPrint(error.toString());
+      debugPrint(st.toString());
+      return false;
+    }
+  }
+
+  static Future<bool> falseWhenFailedWrapper(FutureOr<bool> Function() fun) async {
+    try {
+      return await fun();
+    } catch (error, st) {
+      debugPrint(error.toString());
+      debugPrint(st.toString());
+      return false;
+    }
+  }
+
   static Failure handleError(Object error) {
+    if (error is Failure) return error;
+
     if (error is DioException) {
       final response = error.response;
       if (response?.data is Map<String, dynamic>) {

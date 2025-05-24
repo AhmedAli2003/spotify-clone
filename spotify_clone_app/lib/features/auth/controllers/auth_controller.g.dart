@@ -6,21 +6,36 @@ part of 'auth_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authControllerHash() => r'd1bcf0880e5a4eff367dacc38de1e308d2b7cf8f';
+String _$userStoreHash() => r'b101894ee7e62dd31528e24699cb6846942e918d';
+
+/// See also [userStore].
+@ProviderFor(userStore)
+final userStoreProvider = AutoDisposeProvider<InMemoryStore<User?>>.internal(
+  userStore,
+  name: r'userStoreProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$userStoreHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef UserStoreRef = AutoDisposeProviderRef<InMemoryStore<User?>>;
+String _$authControllerHash() => r'cbe2c9ec6c52c106296b20e5e28deee295b4072a';
 
 /// See also [AuthController].
 @ProviderFor(AuthController)
 final authControllerProvider =
     AutoDisposeAsyncNotifierProvider<AuthController, User?>.internal(
-      AuthController.new,
-      name: r'authControllerProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$authControllerHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  AuthController.new,
+  name: r'authControllerProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$authControllerHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$AuthController = AutoDisposeAsyncNotifier<User?>;
 // ignore_for_file: type=lint

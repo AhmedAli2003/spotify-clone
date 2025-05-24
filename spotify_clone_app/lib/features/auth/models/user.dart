@@ -7,11 +7,19 @@ class UserModel {
   final int? id;
   final String? name;
   final String? email;
+  final String accessToken;
+  final String refreshToken;
+  final String accessTokenExpiresIn;
+  final String refreshTokenExpiresIn;
 
   const UserModel({
     required this.id,
     required this.name,
     required this.email,
+    required this.accessToken,
+    required this.refreshToken,
+    required this.accessTokenExpiresIn,
+    required this.refreshTokenExpiresIn,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
@@ -22,29 +30,47 @@ class UserModel {
     int? id,
     String? name,
     String? email,
+    String? accessToken,
+    String? refreshToken,
+    String? accessTokenExpiresIn,
+    String? refreshTokenExpiresIn,
   }) {
     return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
+      accessToken: accessToken ?? this.accessToken,
+      refreshToken: refreshToken ?? this.refreshToken,
+      accessTokenExpiresIn: accessTokenExpiresIn ?? this.accessTokenExpiresIn,
+      refreshTokenExpiresIn: refreshTokenExpiresIn ?? this.refreshTokenExpiresIn,
     );
   }
 
   @override
-  String toString() => 'UserModel(id: $id, name: $name, email: $email)';
+  String toString() => toJson().toString();
 
   @override
   bool operator ==(covariant UserModel other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.id == id &&
-      other.name == name &&
-      other.email == email;
+
+    return other.id == id &&
+        other.name == name &&
+        other.email == email &&
+        other.accessToken == accessToken &&
+        other.refreshToken == refreshToken &&
+        other.accessTokenExpiresIn == accessTokenExpiresIn &&
+        other.refreshTokenExpiresIn == refreshTokenExpiresIn;
   }
 
   @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ email.hashCode;
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      email.hashCode ^
+      accessToken.hashCode ^
+      refreshToken.hashCode ^
+      accessTokenExpiresIn.hashCode ^
+      refreshTokenExpiresIn.hashCode;
 }
 
 class User {
@@ -76,11 +102,8 @@ class User {
   @override
   bool operator ==(covariant User other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.id == id &&
-      other.name == name &&
-      other.email == email;
+
+    return other.id == id && other.name == name && other.email == email;
   }
 
   @override
